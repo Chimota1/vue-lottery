@@ -1,99 +1,45 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import type { Participant } from './types/Participant'
-import WinnersList from './components/WinnersList.vue'
-import RegistrationForm from './components/RegistrationForm.vue'
-import ParticipantsTable from './components/ParticipantsTable.vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import type { Component } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import type { RouteMeta } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
-const STORAGE_KEY = 'vue-lottery-participants'
+type LayoutName = NonNullable<RouteMeta['layout']>
 
-function loadParticipants(): Participant[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as Participant[]) : []
-  } catch {
-    return []
-  }
+const layouts: Record<LayoutName, Component> = {
+  default: DefaultLayout,
+  auth: AuthLayout,
 }
 
-const participants = ref<Participant[]>(loadParticipants())
+const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
+
+const isRouterReady = ref(false)
+
+const currentLayout = computed(() => layouts[route.meta.layout ?? 'default'])
+
+onMounted(async () => {
+  await router.isReady()
+  isRouterReady.value = true
+  await authStore.fetchCurrentUser()
+})
 
 watch(
-  participants,
-  (value) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(value))
+  () => authStore.isAuthenticated,
+  (isAuthenticated) => {
+    if (!isAuthenticated && route.meta.requiresAuth) {
+      router.push({ name: 'login', query: { redirect: route.fullPath } })
+    }
   },
-  { deep: true },
 )
-
-const winnerIds = ref<number[]>([])
-
-const winners = computed(() =>
-  winnerIds.value
-    .map((id) => participants.value.find((p) => p.id === id))
-    .filter((p): p is Participant => Boolean(p)),
-)
-
-const availableForWinning = computed(() =>
-  participants.value.filter((p) => !winnerIds.value.includes(p.id)),
-)
-
-const canPickWinner = computed(
-  () => winnerIds.value.length < 3 && availableForWinning.value.length > 0,
-)
-
-function pickWinner(): void {
-  if (!canPickWinner.value) {
-    return
-  }
-
-  const pool = availableForWinning.value
-  const randomIndex = Math.floor(Math.random() * pool.length)
-  const chosen = pool[randomIndex]
-
-  if (!chosen) {
-    return
-  }
-
-  winnerIds.value.push(chosen.id)
-}
-
-function removeWinner(id: number): void {
-  winnerIds.value = winnerIds.value.filter((winnerId) => winnerId !== id)
-}
-
-function registerParticipant(participant: Participant): void {
-  participants.value.push(participant)
-}
-
-function updateParticipant(updated: Participant): void {
-  const index = participants.value.findIndex((p) => p.id === updated.id)
-  if (index !== -1) {
-    participants.value[index] = updated
-  }
-}
-
-function deleteParticipant(id: number): void {
-  participants.value = participants.value.filter((p) => p.id !== id)
-  winnerIds.value = winnerIds.value.filter((winnerId) => winnerId !== id)
-}
 </script>
 
 <template>
-  <div class="app">
-    <WinnersList
-      :winners="winners"
-      :can-pick-winner="canPickWinner"
-      @pick="pickWinner"
-      @remove="removeWinner"
-    />
-
-    <RegistrationForm :participants="participants" @register="registerParticipant" />
-
-    <ParticipantsTable
-      :participants="participants"
-      @update="updateParticipant"
-      @delete="deleteParticipant"
-    />
-  </div>
+  <component :is="currentLayout" v-if="isRouterReady">
+    <RouterView />
+  </component>
 </template>
