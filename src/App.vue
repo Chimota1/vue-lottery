@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import type { Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { RouteMeta } from 'vue-router'
@@ -18,14 +18,14 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-const isRouterReady = ref(false)
-
-const currentLayout = computed(() => layouts[route.meta.layout ?? 'default'])
+const currentLayout = computed(() => layouts[route.meta.layout ?? 'default'] ?? DefaultLayout)
 
 onMounted(async () => {
-  await router.isReady()
-  isRouterReady.value = true
-  await authStore.fetchCurrentUser()
+  try {
+    await authStore.fetchCurrentUser()
+  } catch {
+    // ignore silent auth check failure
+  }
 })
 
 watch(
@@ -39,7 +39,7 @@ watch(
 </script>
 
 <template>
-  <component :is="currentLayout" v-if="isRouterReady">
+  <component :is="currentLayout">
     <RouterView />
   </component>
 </template>
