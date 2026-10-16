@@ -6,7 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: 'https://github.com/Chimota1/vue-lottery',
+  base: '/vue-lottery/',
   plugins: [
     vue(),
     vueDevTools(),
@@ -14,6 +14,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
+      },
     },
   },
 })

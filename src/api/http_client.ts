@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://dummyjson.com'
 
 export interface RequestOptions extends Omit<RequestInit, 'headers'> {
   headers?: Record<string, string>

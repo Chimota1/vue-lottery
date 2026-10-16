@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const REPOSITORY_URL = 'https://github.com/smilezevil/vue-lottery-app'
+const REPOSITORY_URL = 'https://github.com/Chimota1/vue-lottery'
 
 const features: string[] = [
   'Реєстрація учасників лотереї з валідацією форми',
@@ -41,6 +41,16 @@ const technologies: string[] = [
           {{ technology }}
         </span>
       </div>
+
+      <a
+        :href="REPOSITORY_URL"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-primary"
+      >
+        <i class="bi bi-github"></i>
+        Репозиторій проєкту
+      </a>
     </div>
   </div>
 </template>
