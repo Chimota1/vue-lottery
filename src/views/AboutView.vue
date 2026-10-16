@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import avatarUrl from '@/assets/avatar.jpg'
 
-const FULL_NAME = 'Демʼянчук Анастасія Михайлівна'
-const GITHUB_URL = 'https://github.com/smilezevil'
+const FULL_NAME = 'Кіндрат Анатолій Володимирович'
+const GITHUB_URL = 'https://github.com/Chimota1'
 
 const skills: string[] = [
   'HTML',
@@ -24,7 +23,6 @@ const skills: string[] = [
   <div class="card">
     <div class="card-body">
       <div class="author">
-        <img :src="avatarUrl" :alt="FULL_NAME" class="author__avatar" />
         <div>
           <h1 class="author__name">{{ FULL_NAME }}</h1>
           <p class="author__role">Автор проєкту</p>

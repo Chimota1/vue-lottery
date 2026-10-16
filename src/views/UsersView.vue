@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { buildUsersQuery, USERS_PAGE_SIZE, useUsersStore } from '@/stores/users'
+import { buildUsersQuery, USERS_PAGE_SIZE, useUsersStore } from '@/stores/user'
 import type { User } from '@/types/user'
 import WinnersList from '@/components/WinnersList.vue'
 import SearchBar from '@/components/SearchBar.vue'

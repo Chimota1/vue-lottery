@@ -15,17 +15,22 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-const loginSchema = toTypedSchema(
-  z.object({
-    username: z.string({ required_error: REQUIRED }).trim().min(1, REQUIRED),
-    password: z
-      .string({ required_error: REQUIRED })
-      .min(1, REQUIRED)
-      .min(MIN_PASSWORD_LENGTH, `Мінімум ${MIN_PASSWORD_LENGTH} символів`),
-  }),
-)
+// 1. Виносимо Zod-схему в окрему змінну (без required_error, щоб уникнути конфлікту типів)
+const zodSchema = z.object({
+  username: z.string().trim().min(1, REQUIRED),
+  password: z
+    .string()
+    .min(1, REQUIRED)
+    .min(MIN_PASSWORD_LENGTH, `Мінімум ${MIN_PASSWORD_LENGTH} символів`),
+})
 
-const { defineField, errors, handleSubmit } = useForm({
+// 2. Виводимо тип із Zod-схеми
+type LoginForm = z.infer<typeof zodSchema>
+
+const loginSchema = toTypedSchema(zodSchema)
+
+// 3. Передаємо тип LoginForm у useForm
+const { defineField, errors, handleSubmit } = useForm<LoginForm>({
   validationSchema: loginSchema,
 })
 

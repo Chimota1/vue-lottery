@@ -6,7 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? './' : '/',
+  base: 'https://github.com/Chimota1/vue-lottery',
   plugins: [
     vue(),
     vueDevTools(),
