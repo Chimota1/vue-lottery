@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUsersStore } from '@/stores/users'
+import { useUsersStore } from '@/stores/user'
 import type { CreateUserDto } from '@/types/user'
 import UserForm from '@/components/UserForm.vue'
 
