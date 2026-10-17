@@ -66,16 +66,13 @@ const onSubmit = handleSubmit(async (values) => {
     <div class="card login__card">
       <div class="card-body">
         <h1 class="login__title">Вхід</h1>
-        <p class="login__hint">
-          Тестовий акаунт DummyJSON: <code>emilys</code> / <code>emilyspass</code>
-        </p>
 
         <form novalidate @submit.prevent="onSubmit">
           <BaseInput
             v-model="username"
             v-bind="usernameAttrs"
             label="Username"
-            placeholder="emilys"
+            placeholder="Введіть логін"
             autocomplete="username"
             :error="errors.username"
           />
@@ -84,6 +81,7 @@ const onSubmit = handleSubmit(async (values) => {
             v-bind="passwordAttrs"
             type="password"
             label="Password"
+            placeholder="Введіть пароль"
             autocomplete="current-password"
             :error="errors.password"
           />
@@ -116,11 +114,6 @@ const onSubmit = handleSubmit(async (values) => {
 .login__title {
   font-size: 1.75rem;
   font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.login__hint {
-  color: #6c757d;
   margin-bottom: 24px;
 }
 
