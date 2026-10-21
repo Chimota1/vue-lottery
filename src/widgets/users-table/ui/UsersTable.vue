@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from '@/entities/user'
-import { AppTable, AppTableColumn } from '@/shared/ui'
+import type { AppTableColumnDef } from '@/shared/ui'
+import { AppTable } from '@/shared/ui'
 
 defineProps<{
   users: User[]
@@ -11,83 +12,80 @@ const emit = defineEmits<{
   delete: [user: User]
 }>()
 
+const columns: AppTableColumnDef[] = [
+  { header: '#', slot: 'index' },
+  { header: 'Name', slot: 'name' },
+  { field: 'age', header: 'Age' },
+  { field: 'gender', header: 'Gender' },
+  { field: 'email', header: 'Email', slot: 'email' },
+  { field: 'phone', header: 'Phone number' },
+  { header: 'Actions', slot: 'actions', bodyClass: 'actions-cell' },
+]
+
 function fullName(user: User): string {
   return `${user.firstName} ${user.lastName}`
 }
 </script>
 
 <template>
-  <AppTable :value="users">
-    <AppTableColumn header="#">
-      <template #body="slotProps">
-        {{ startIndex + (slotProps.index as number) + 1 }}
-      </template>
-    </AppTableColumn>
+  <AppTable :value="users" :columns="columns">
+    <template #index="{ index }">
+      {{ startIndex + (index as number) + 1 }}
+    </template>
 
-    <AppTableColumn header="Name">
-      <template #body="slotProps">
+    <template #name="{ data }">
+      <RouterLink
+        :to="{ name: 'user-details', params: { id: (data as User).id } }"
+        class="user-cell"
+      >
+        <img
+          v-if="(data as User).image"
+          :src="(data as User).image"
+          :alt="fullName(data as User)"
+          class="user-cell__avatar"
+        />
+        <span v-else class="user-cell__avatar user-cell__avatar--empty">
+          <i class="pi pi-user"></i>
+        </span>
+        <span class="text-cell" :title="fullName(data as User)">
+          {{ fullName(data as User) }}
+        </span>
+      </RouterLink>
+    </template>
+
+    <template #email="{ data }">
+      <span class="text-cell" :title="(data as User).email">{{ (data as User).email }}</span>
+    </template>
+
+    <template #actions="{ data }">
+      <div class="actions">
         <RouterLink
-          :to="{ name: 'user-details', params: { id: slotProps.data.id } }"
-          class="user-cell"
+          :to="{ name: 'user-details', params: { id: (data as User).id } }"
+          class="icon-btn"
+          title="Переглянути"
+          aria-label="Переглянути"
         >
-          <img
-            v-if="slotProps.data.image"
-            :src="slotProps.data.image"
-            :alt="fullName(slotProps.data)"
-            class="user-cell__avatar"
-          />
-          <span v-else class="user-cell__avatar user-cell__avatar--empty">
-            <i class="pi pi-user"></i>
-          </span>
-          <span class="text-cell" :title="fullName(slotProps.data)">
-            {{ fullName(slotProps.data) }}
-          </span>
+          <i class="pi pi-eye"></i>
         </RouterLink>
-      </template>
-    </AppTableColumn>
-
-    <AppTableColumn field="age" header="Age" />
-    <AppTableColumn field="gender" header="Gender" />
-
-    <AppTableColumn field="email" header="Email">
-      <template #body="slotProps">
-        <span class="text-cell" :title="slotProps.data.email">{{ slotProps.data.email }}</span>
-      </template>
-    </AppTableColumn>
-
-    <AppTableColumn field="phone" header="Phone number" />
-
-    <AppTableColumn header="Actions" body-class="actions-cell">
-      <template #body="slotProps">
-        <div class="actions">
-          <RouterLink
-            :to="{ name: 'user-details', params: { id: slotProps.data.id } }"
-            class="icon-btn"
-            title="Переглянути"
-            aria-label="Переглянути"
-          >
-            <i class="pi pi-eye"></i>
-          </RouterLink>
-          <RouterLink
-            :to="{ name: 'user-edit', params: { id: slotProps.data.id } }"
-            class="icon-btn icon-btn--edit"
-            title="Редагувати дані"
-            aria-label="Редагувати дані"
-          >
-            <i class="pi pi-pencil"></i>
-          </RouterLink>
-          <button
-            type="button"
-            class="icon-btn icon-btn--delete"
-            title="Видалити учасника"
-            aria-label="Видалити учасника"
-            @click="emit('delete', slotProps.data)"
-          >
-            <i class="pi pi-trash"></i>
-          </button>
-        </div>
-      </template>
-    </AppTableColumn>
+        <RouterLink
+          :to="{ name: 'user-edit', params: { id: (data as User).id } }"
+          class="icon-btn icon-btn--edit"
+          title="Редагувати дані"
+          aria-label="Редагувати дані"
+        >
+          <i class="pi pi-pencil"></i>
+        </RouterLink>
+        <button
+          type="button"
+          class="icon-btn icon-btn--delete"
+          title="Видалити учасника"
+          aria-label="Видалити учасника"
+          @click="emit('delete', data as User)"
+        >
+          <i class="pi pi-trash"></i>
+        </button>
+      </div>
+    </template>
 
     <template #empty>
       <p class="empty-message">Користувачів не знайдено</p>

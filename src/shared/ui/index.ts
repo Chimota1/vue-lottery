@@ -1,7 +1,7 @@
 export { default as AppButton } from './app-button/AppButton.vue'
 export { default as AppInput } from './app-input/AppInput.vue'
 export { default as AppTable } from './table/AppTable.vue'
-export { default as AppTableColumn } from './table/AppTableColumn.vue'
+export type { AppTableColumnDef } from './table/AppTable.vue'
 export { default as AppConfirmDialog } from './app-confirm-dialog/AppConfirmDialog.vue'
 export { default as AppToast } from './app-toast/AppToast.vue'
 export { useOperationsNotifier } from './app-toast/notifier'
