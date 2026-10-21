@@ -1,12 +1,12 @@
-import './assets/main.scss'
+import './styles/main.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { setAuthHandler } from './api/http_client'
-import { useAuthStore } from './stores/auth'
+import { setAuthHandler } from '@/api/http_client'
+import { useAuthStore } from '@/stores/auth'
 
 const app = createApp(App)
 
