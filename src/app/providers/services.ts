@@ -1,6 +1,6 @@
 import { setAuthHandler } from '@/shared/api'
 import { ServiceProvider, serviceNames } from '@/shared/lib'
-import { AuthService, useAuthStore } from '@/entities/session'
+import { AuthService, useSessionStore } from '@/entities/session'
 import { UserService } from '@/entities/user'
 
 /**
@@ -12,7 +12,7 @@ export function initServices(): void {
   ServiceProvider.register(serviceNames.auth, () => new AuthService())
   ServiceProvider.register(serviceNames.users, () => new UserService())
 
-  const authStore = useAuthStore()
+  const authStore = useSessionStore()
   setAuthHandler({
     getAccessToken: () => authStore.accessToken,
     refreshAccessToken: () => authStore.refreshAccessToken(),

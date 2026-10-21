@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useUsersStore, type CreateUserDto } from '@/entities/user'
 import { UserForm } from '@/features/user-form'
 
 const router = useRouter()
 const usersStore = useUsersStore()
+const { listQuery } = storeToRefs(usersStore)
 
 const isSubmitting = ref(false)
 const submitError = ref<string | null>(null)
@@ -25,12 +27,12 @@ async function handleSubmit(values: CreateUserDto): Promise<void> {
 }
 
 function cancel(): void {
-  router.push({ name: 'users', query: usersStore.listQuery })
+  router.push({ name: 'users', query: listQuery.value })
 }
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'users', query: usersStore.listQuery }" class="back-link">
+  <RouterLink :to="{ name: 'users', query: listQuery }" class="back-link">
     <i class="bi bi-arrow-left"></i>
     До списку учасників
   </RouterLink>

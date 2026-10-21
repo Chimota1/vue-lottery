@@ -127,7 +127,7 @@ export const useUsersStore = defineStore('users', () => {
     )
   }
 
-  async function loadUser(id: number): Promise<User> {
+  async function fetchUser(id: number): Promise<User> {
     if (isDeleted(id)) {
       throw new Error('Цього користувача видалено')
     }
@@ -183,7 +183,7 @@ export const useUsersStore = defineStore('users', () => {
     return updated
   }
 
-  async function deleteUser(id: number): Promise<void> {
+  async function removeUser(id: number): Promise<void> {
     const createdIndex = createdUsers.value.findIndex((user) => user.id === id)
 
     if (createdIndex !== -1) {
@@ -236,10 +236,10 @@ export const useUsersStore = defineStore('users', () => {
     canPickWinner,
     fetchUsers,
     getUser,
-    loadUser,
+    fetchUser,
     createUser,
     updateUser,
-    deleteUser,
+    removeUser,
     pickWinner,
     removeWinner,
   }

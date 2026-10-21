@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useUsersStore, DeleteUserModal } from '@/entities/user'
 
 const props = defineProps<{
@@ -15,6 +16,7 @@ interface DetailItem {
 const route = useRoute()
 const router = useRouter()
 const usersStore = useUsersStore()
+const { listQuery } = storeToRefs(usersStore)
 
 const userId = computed(() => Number(props.id))
 const user = computed(() => usersStore.getUser(userId.value))
@@ -58,7 +60,7 @@ async function loadUser(): Promise<void> {
   loadError.value = null
 
   try {
-    await usersStore.loadUser(userId.value)
+    await usersStore.fetchUser(userId.value)
   } catch (e) {
     loadError.value = e instanceof Error ? e.message : 'Не вдалося завантажити користувача'
   } finally {
@@ -82,9 +84,9 @@ async function confirmDelete(): Promise<void> {
   deleteError.value = null
 
   try {
-    await usersStore.deleteUser(userId.value)
+    await usersStore.removeUser(userId.value)
     isDeleteModalOpen.value = false
-    router.push({ name: 'users', query: usersStore.listQuery })
+    router.push({ name: 'users', query: listQuery.value })
   } catch (e) {
     deleteError.value = e instanceof Error ? e.message : 'Не вдалося видалити користувача'
   } finally {
@@ -94,7 +96,7 @@ async function confirmDelete(): Promise<void> {
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'users', query: usersStore.listQuery }" class="back-link">
+  <RouterLink :to="{ name: 'users', query: listQuery }" class="back-link">
     <i class="bi bi-arrow-left"></i>
     До списку учасників
   </RouterLink>

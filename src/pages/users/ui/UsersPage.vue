@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import {
   buildUsersQuery,
   USERS_PAGE_SIZE,
@@ -15,6 +16,10 @@ import { UsersTable } from '@/widgets/users-table'
 const route = useRoute()
 const router = useRouter()
 const usersStore = useUsersStore()
+
+// Список, кількість, loading/error — через storeToRefs, щоб зберегти реактивність.
+const { users, total, totalPages, isLoading, error, winners, canPickWinner } =
+  storeToRefs(usersStore)
 
 const currentPage = computed(() => {
   const page = Number(route.query.page)
@@ -61,7 +66,7 @@ async function confirmDelete(): Promise<void> {
   deleteError.value = null
 
   try {
-    await usersStore.deleteUser(userToDelete.value.id)
+    await usersStore.removeUser(userToDelete.value.id)
     isDeleteModalOpen.value = false
   } catch (e) {
     deleteError.value = e instanceof Error ? e.message : 'Не вдалося видалити користувача'
@@ -81,8 +86,8 @@ watch(
 
 <template>
   <WinnersList
-    :winners="usersStore.winners"
-    :can-pick-winner="usersStore.canPickWinner"
+    :winners="winners"
+    :can-pick-winner="canPickWinner"
     @pick="usersStore.pickWinner"
     @remove="usersStore.removeWinner"
   />
@@ -92,7 +97,7 @@ watch(
       <div class="users-toolbar">
         <h2 class="users-title">
           Учасники
-          <span class="users-count">{{ usersStore.total }}</span>
+          <span class="users-count">{{ total }}</span>
         </h2>
         <div class="users-toolbar__actions">
           <SearchBar
@@ -107,28 +112,28 @@ watch(
         </div>
       </div>
 
-      <div v-if="usersStore.isLoading" class="state">
+      <div v-if="isLoading" class="state">
         <i class="bi bi-arrow-repeat state__spinner"></i>
         Завантаження...
       </div>
 
-      <div v-else-if="usersStore.error" class="state state--error">
+      <div v-else-if="error" class="state state--error">
         <p class="state__text">
           <i class="bi bi-exclamation-triangle"></i>
-          {{ usersStore.error }}
+          {{ error }}
         </p>
         <button type="button" class="btn btn-primary" @click="retry">Спробувати ще раз</button>
       </div>
 
       <template v-else>
         <UsersTable
-          :users="usersStore.users"
+          :users="users"
           :start-index="startIndex"
           @delete="openDeleteModal"
         />
         <AppPagination
           :page="currentPage"
-          :total-pages="usersStore.totalPages"
+          :total-pages="totalPages"
           @change="goToPage"
         />
       </template>

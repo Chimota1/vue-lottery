@@ -4,7 +4,7 @@ import { useForm } from 'vee-validate'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { z } from 'zod'
-import { useAuthStore } from '@/entities/session'
+import { useSessionStore } from '@/entities/session'
 import { BaseInput, BaseButton } from '@/shared/ui'
 
 const REQUIRED = "Поле обов'язкове для заповнення"
@@ -12,7 +12,7 @@ const MIN_PASSWORD_LENGTH = 6
 
 const route = useRoute()
 const router = useRouter()
-const authStore = useAuthStore()
+const authStore = useSessionStore()
 
 // 1. Виносимо Zod-схему в окрему змінну (без required_error, щоб уникнути конфлікту типів)
 const zodSchema = z.object({

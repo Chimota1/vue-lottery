@@ -3,7 +3,7 @@ import { computed, onMounted, watch } from 'vue'
 import type { Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { RouteMeta } from 'vue-router'
-import { useAuthStore } from '@/entities/session'
+import { useSessionStore } from '@/entities/session'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import AuthLayout from './layouts/AuthLayout.vue'
 
@@ -16,7 +16,7 @@ const layouts: Record<LayoutName, Component> = {
 
 const route = useRoute()
 const router = useRouter()
-const authStore = useAuthStore()
+const authStore = useSessionStore()
 
 const currentLayout = computed(() => layouts[route.meta.layout ?? 'default'] ?? DefaultLayout)
 

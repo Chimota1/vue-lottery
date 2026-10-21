@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/entities/session'
+import { storeToRefs } from 'pinia'
+import { useSessionStore } from '@/entities/session'
 import { LogoutButton } from '@/features/auth'
 
 interface NavItem {
@@ -13,7 +14,8 @@ const navItems: NavItem[] = [
   { label: 'Users', to: '/users' },
 ]
 
-const authStore = useAuthStore()
+const sessionStore = useSessionStore()
+const { user, isAuthenticated } = storeToRefs(sessionStore)
 </script>
 
 <template>
@@ -22,15 +24,15 @@ const authStore = useAuthStore()
       {{ item.label }}
     </RouterLink>
 
-    <template v-if="authStore.isAuthenticated">
-      <span v-if="authStore.user" class="current-user">
+    <template v-if="isAuthenticated">
+      <span v-if="user" class="current-user">
         <img
-          v-if="authStore.user.image"
-          :src="authStore.user.image"
-          :alt="authStore.user.firstName"
+          v-if="user.image"
+          :src="user.image"
+          :alt="user.firstName"
           class="current-user__avatar"
         />
-        {{ authStore.user.firstName }}
+        {{ user.firstName }}
       </span>
       <LogoutButton />
     </template>
