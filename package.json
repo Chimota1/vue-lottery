@@ -12,6 +12,7 @@
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
+    "lint:fsd": "steiger src",
     "format": "prettier --write --experimental-cli src/",
     "deploy": "npm run build && gh-pages -d dist --dotfiles"
   },

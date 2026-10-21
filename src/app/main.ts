@@ -5,18 +5,12 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { setAuthHandler } from '@/shared/api'
-import { useAuthStore } from '@/entities/session'
+import { initServices } from './providers/services'
 
 const app = createApp(App)
 
 app.use(createPinia())
+initServices()
 app.use(router)
-
-const authStore = useAuthStore()
-setAuthHandler({
-  getAccessToken: () => authStore.accessToken,
-  refreshAccessToken: () => authStore.refreshAccessToken(),
-})
 
 app.mount('#app')

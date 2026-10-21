@@ -1,1 +1,2 @@
-export { ServiceProvider } from './service-provider'
+export { ServiceProvider, serviceNames } from './service-provider'
+export type { ServiceFactory } from './service-provider'

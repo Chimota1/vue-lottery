@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { LocationQueryRaw } from 'vue-router'
-import { ServiceProvider } from '@/shared/lib'
+import { ServiceProvider, serviceNames } from '@/shared/lib'
+import type { UserService } from '../api/user.service'
 import type { CreateUserDto, UpdateUserDto, User } from './types'
 
 export const USERS_PAGE_SIZE = 10
@@ -89,8 +90,8 @@ export const useUsersStore = defineStore('users', () => {
     try {
       const params = { limit: USERS_PAGE_SIZE, skip: (newPage - 1) * USERS_PAGE_SIZE }
       const result = newQuery
-        ? await ServiceProvider.users.search(newQuery, params)
-        : await ServiceProvider.users.getAll(params)
+        ? await ServiceProvider.get<UserService>(serviceNames.users).search(newQuery, params)
+        : await ServiceProvider.get<UserService>(serviceNames.users).getAll(params)
 
       if (requestId !== requestCounter) {
         return
@@ -136,7 +137,7 @@ export const useUsersStore = defineStore('users', () => {
       return localUser
     }
 
-    const user = await ServiceProvider.users.getById(id)
+    const user = await ServiceProvider.get<UserService>(serviceNames.users).getById(id)
     userCache.value[id] = user
     return user
   }
@@ -150,7 +151,7 @@ export const useUsersStore = defineStore('users', () => {
   }
 
   async function createUser(data: CreateUserDto): Promise<User> {
-    const response = await ServiceProvider.users.create(data)
+    const response = await ServiceProvider.get<UserService>(serviceNames.users).create(data)
 
     const id = Math.max(response.id, ...createdUsers.value.map((user) => user.id + 1))
     const user: User = { ...data, ...response, id }
@@ -174,7 +175,7 @@ export const useUsersStore = defineStore('users', () => {
       return updated
     }
 
-    const response = await ServiceProvider.users.update(id, data)
+    const response = await ServiceProvider.get<UserService>(serviceNames.users).update(id, data)
     const updated = withoutStaleBirthDate(current, { ...current, ...response, ...data, id })
 
     updatedUsers.value[id] = updated
@@ -189,7 +190,7 @@ export const useUsersStore = defineStore('users', () => {
       createdUsers.value.splice(createdIndex, 1)
     } else {
       const current = getUser(id) ?? serverUsers.value.find((user) => user.id === id)
-      await ServiceProvider.users.delete(id)
+      await ServiceProvider.get<UserService>(serviceNames.users).delete(id)
 
       if (current) {
         deletedUsers.value.push(current)
