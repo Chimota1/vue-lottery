@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useSessionStore } from '@/entities/session'
+import { useSettingsStore } from '@/features/settings'
 import { LogoutButton } from '@/features/auth'
 
 interface NavItem {
@@ -16,6 +17,8 @@ const navItems: NavItem[] = [
 
 const sessionStore = useSessionStore()
 const { user, isAuthenticated } = storeToRefs(sessionStore)
+const settingsStore = useSettingsStore()
+const { theme } = storeToRefs(settingsStore)
 </script>
 
 <template>
@@ -41,6 +44,16 @@ const { user, isAuthenticated } = storeToRefs(sessionStore)
       <i class="pi pi-sign-in"></i>
       Login
     </RouterLink>
+
+    <button
+      type="button"
+      class="nav-item nav-item--theme"
+      :title="theme === 'dark' ? 'Світла тема' : 'Темна тема'"
+      :aria-label="theme === 'dark' ? 'Світла тема' : 'Темна тема'"
+      @click="settingsStore.toggleTheme()"
+    >
+      <i :class="theme === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"></i>
+    </button>
   </nav>
 </template>
 

@@ -10,7 +10,7 @@ defineProps<{
 <template>
   <Column :field="field" :header="header">
     <template v-if="$slots.default" #body="slotProps">
-      <slot :data="slotProps.data" />
+      <slot :data="slotProps.data" :index="slotProps.index" />
     </template>
   </Column>
 </template>

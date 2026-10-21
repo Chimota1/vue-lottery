@@ -18,6 +18,17 @@ function readStoredUser(): AuthUser | null {
   }
 }
 
+/**
+ * LocalStorage persistence for tokens/user is kept MANUAL here (three dedicated
+ * keys) instead of pinia-plugin-persistedstate, because:
+ * - session state mixes volatile data (tokens) and it must stay re-serializable
+ *   on partial updates (setSession writes only what changed);
+ * - per-field keys avoid putting refresh token + user object into one JSON blob
+ *   and let each piece be read/cleared independently;
+ * - pinia-plugin-persistedstate hydrates the whole state at store creation and
+ *   persists it on every mutation — that matches the settings store
+ *   (features/settings, single `lottery-theme` key) where it IS used.
+ */
 export const useSessionStore = defineStore('session', () => {
   // state: tokens + authorized user, persisted to localStorage (DummyJSON tokens expire)
   const accessToken = ref<string | null>(localStorage.getItem(ACCESS_TOKEN_KEY))
