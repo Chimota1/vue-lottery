@@ -3,9 +3,9 @@ import { computed, onMounted, watch } from 'vue'
 import type { Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { RouteMeta } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import AuthLayout from '@/layouts/AuthLayout.vue'
+import { useAuthStore } from '@/entities/session'
+import DefaultLayout from './layouts/DefaultLayout.vue'
+import AuthLayout from './layouts/AuthLayout.vue'
 
 type LayoutName = NonNullable<RouteMeta['layout']>
 

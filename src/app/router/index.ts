@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/entities/session'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,44 +7,44 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../../views/HomeView.vue'),
+      component: () => import('@/pages/home'),
       meta: { layout: 'default', title: 'Головна' },
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('../../views/AboutView.vue'),
+      component: () => import('@/pages/about'),
       meta: { layout: 'default', title: 'Про автора' },
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('../../views/LoginView.vue'),
+      component: () => import('@/pages/login'),
       meta: { layout: 'auth', title: 'Вхід' },
     },
     {
       path: '/users',
       name: 'users',
-      component: () => import('../../views/UsersView.vue'),
+      component: () => import('@/pages/users'),
       meta: { layout: 'default', requiresAuth: true, title: 'Учасники' },
     },
     {
       path: '/users/create',
       name: 'user-create',
-      component: () => import('../../views/UserCreateView.vue'),
+      component: () => import('@/pages/user-create'),
       meta: { layout: 'default', requiresAuth: true, title: 'Новий учасник' },
     },
     {
       path: '/users/:id',
       name: 'user-details',
-      component: () => import('../../views/UserDetailsView.vue'),
+      component: () => import('@/pages/user-details'),
       props: true,
       meta: { layout: 'default', requiresAuth: true, title: 'Деталі користувача' },
       children: [
         {
           path: 'edit',
           name: 'user-edit',
-          component: () => import('../../views/UserEditView.vue'),
+          component: () => import('@/pages/user-edit'),
           props: true,
           meta: { layout: 'default', requiresAuth: true, title: 'Редагування користувача' },
         },
@@ -53,7 +53,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('../../views/NotFoundView.vue'),
+      component: () => import('@/pages/not-found'),
       meta: { layout: 'default', title: '404 Не знайдено' },
     },
   ],
