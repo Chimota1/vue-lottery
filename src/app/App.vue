@@ -4,6 +4,7 @@ import type { Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { RouteMeta } from 'vue-router'
 import { useSessionStore } from '@/entities/session'
+import { AppToast } from '@/shared/ui'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import AuthLayout from './layouts/AuthLayout.vue'
 
@@ -42,4 +43,6 @@ watch(
   <component :is="currentLayout">
     <RouterView />
   </component>
+
+  <AppToast />
 </template>

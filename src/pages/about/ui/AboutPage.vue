@@ -10,7 +10,7 @@ const skills: string[] = [
   'TypeScript',
   'Vue 3',
   'Pinia',
-  'Bootstrap',
+  'PrimeVue',
   'Git / GitHub',
 ]
 </script>
@@ -31,7 +31,7 @@ const skills: string[] = [
       </div>
 
       <a :href="GITHUB_URL" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-        <i class="bi bi-github"></i>
+        <i class="pi pi-github"></i>
         GitHub профіль
       </a>
     </div>

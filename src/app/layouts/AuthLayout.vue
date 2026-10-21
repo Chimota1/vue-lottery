@@ -8,7 +8,7 @@ import { AppLogo } from '@/widgets/app-header'
       <AppLogo class="auth-layout__logo" />
       <slot />
       <RouterLink to="/" class="auth-layout__back">
-        <i class="bi bi-arrow-left"></i>
+        <i class="pi pi-arrow-left"></i>
         На головну
       </RouterLink>
     </div>

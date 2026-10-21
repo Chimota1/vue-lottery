@@ -6,16 +6,16 @@ import {
   buildUsersQuery,
   USERS_PAGE_SIZE,
   useUsersStore,
-  DeleteUserModal,
   type User,
 } from '@/entities/user'
 import { WinnersList } from '@/widgets/winners'
-import { SearchBar, AppPagination } from '@/shared/ui'
+import { SearchBar, AppPagination, AppConfirmDialog, useOperationsNotifier } from '@/shared/ui'
 import { UsersTable } from '@/widgets/users-table'
 
 const route = useRoute()
 const router = useRouter()
 const usersStore = useUsersStore()
+const { notifySuccess, notifyError } = useOperationsNotifier()
 
 // Список, кількість, loading/error — через storeToRefs, щоб зберегти реактивність.
 const { users, total, totalPages, isLoading, error, winners, canPickWinner } =
@@ -68,8 +68,10 @@ async function confirmDelete(): Promise<void> {
   try {
     await usersStore.removeUser(userToDelete.value.id)
     isDeleteModalOpen.value = false
+    notifySuccess('Користувача видалено')
   } catch (e) {
     deleteError.value = e instanceof Error ? e.message : 'Не вдалося видалити користувача'
+    notifyError(deleteError.value)
   } finally {
     isDeleting.value = false
   }
@@ -106,20 +108,20 @@ watch(
             @filter-by-name="handleSearch"
           />
           <RouterLink :to="{ name: 'user-create' }" class="btn btn-primary add-btn">
-            <i class="bi bi-plus-lg"></i>
+            <i class="pi pi-plus"></i>
             Новий учасник
           </RouterLink>
         </div>
       </div>
 
       <div v-if="isLoading" class="state">
-        <i class="bi bi-arrow-repeat state__spinner"></i>
+        <i class="pi pi-refresh pi-spin state__spinner"></i>
         Завантаження...
       </div>
 
       <div v-else-if="error" class="state state--error">
         <p class="state__text">
-          <i class="bi bi-exclamation-triangle"></i>
+          <i class="pi pi-exclamation-triangle"></i>
           {{ error }}
         </p>
         <button type="button" class="btn btn-primary" @click="retry">Спробувати ще раз</button>
@@ -140,11 +142,18 @@ watch(
     </div>
   </div>
 
-  <DeleteUserModal
+  <AppConfirmDialog
     v-model="isDeleteModalOpen"
-    :user="userToDelete"
-    :is-deleting="isDeleting"
+    title="Видалення учасника"
+    :message="
+      userToDelete
+        ? `Видалити учасника ${userToDelete.firstName} ${userToDelete.lastName}?`
+        : undefined
+    "
     :error-message="deleteError"
+    :is-loading="isDeleting"
+    confirm-label="Видалити"
+    danger
     @confirm="confirmDelete"
   />
 </template>

@@ -44,7 +44,7 @@ const pageItems = computed<PageItem[]>(() => {
       aria-label="Попередня сторінка"
       @click="emit('change', page - 1)"
     >
-      <i class="bi bi-chevron-left"></i>
+      <i class="pi pi-chevron-left"></i>
     </button>
 
     <template v-for="item in pageItems" :key="item">
@@ -68,7 +68,7 @@ const pageItems = computed<PageItem[]>(() => {
       aria-label="Наступна сторінка"
       @click="emit('change', page + 1)"
     >
-      <i class="bi bi-chevron-right"></i>
+      <i class="pi pi-chevron-right"></i>
     </button>
   </nav>
 </template>

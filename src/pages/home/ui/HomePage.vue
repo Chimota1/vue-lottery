@@ -14,7 +14,7 @@ const technologies: string[] = [
   'TypeScript',
   'Vue Router',
   'Pinia',
-  'Bootstrap 5',
+  'PrimeVue',
   'SCSS',
   'Vite',
   'ESLint',
@@ -48,7 +48,7 @@ const technologies: string[] = [
         rel="noopener noreferrer"
         class="btn btn-primary"
       >
-        <i class="bi bi-github"></i>
+        <i class="pi pi-github"></i>
         Репозиторій проєкту
       </a>
     </div>

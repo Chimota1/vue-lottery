@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUsersStore, type CreateUserDto } from '@/entities/user'
 import { UserForm } from '@/features/user-form'
+import { useOperationsNotifier } from '@/shared/ui'
 
 const props = defineProps<{
   id: string
@@ -10,6 +11,7 @@ const props = defineProps<{
 
 const router = useRouter()
 const usersStore = useUsersStore()
+const { notifySuccess, notifyError } = useOperationsNotifier()
 
 const userId = computed(() => Number(props.id))
 
@@ -44,9 +46,11 @@ async function handleSubmit(values: CreateUserDto): Promise<void> {
 
   try {
     await usersStore.updateUser(userId.value, values)
+    notifySuccess('Дані користувача оновлено')
     backToDetails()
   } catch (e) {
     submitError.value = e instanceof Error ? e.message : 'Не вдалося оновити дані'
+    notifyError(submitError.value)
   } finally {
     isSubmitting.value = false
   }

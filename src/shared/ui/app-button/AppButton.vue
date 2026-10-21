@@ -1,14 +1,18 @@
 <script setup lang="ts">
-withDefaults(
+import Button from 'primevue/button'
+
+const props = withDefaults(
   defineProps<{
     type?: 'button' | 'submit'
     variant?: 'primary' | 'secondary' | 'danger'
     disabled?: boolean
+    loading?: boolean
   }>(),
   {
     type: 'button',
     variant: 'primary',
     disabled: false,
+    loading: false,
   },
 )
 
@@ -18,13 +22,13 @@ defineEmits<{
 </script>
 
 <template>
-  <button
+  <Button
     :type="type"
-    class="btn"
-    :class="`btn-${variant}`"
+    :severity="props.variant === 'primary' ? undefined : props.variant"
     :disabled="disabled"
+    :loading="loading"
     @click="$emit('click')"
   >
     <slot />
-  </button>
+  </Button>
 </template>

@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import { useId } from 'vue'
+import InputText from 'primevue/inputtext'
 
 defineOptions({
   inheritAttrs: false,
 })
 
 defineProps<{
-  modelValue?: string | number
   label: string
-  type?: string
   placeholder?: string
   error?: string
 }>()
 
-defineEmits<{
-  'update:modelValue': [value: string]
-}>()
+// Works with VeeValidate: v-model + `v-bind="fieldAttrs"` fall through unchanged.
+const modelValue = defineModel<string | number>()
 
 const inputId = useId()
 </script>
@@ -23,15 +21,14 @@ const inputId = useId()
 <template>
   <div class="field">
     <label class="form-label" :for="inputId">{{ label }}</label>
-    <input
+    <InputText
       v-bind="$attrs"
       :id="inputId"
-      :type="type ?? 'text'"
-      class="form-control"
-      :class="{ 'is-invalid': error }"
+      :model-value="modelValue == null ? null : String(modelValue)"
       :placeholder="placeholder"
-      :value="modelValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      :invalid="Boolean(error)"
+      fluid
+      @update:model-value="modelValue = $event"
     />
     <div v-if="error" class="invalid-feedback">{{ error }}</div>
   </div>

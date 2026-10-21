@@ -3,7 +3,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from 'zod'
 import type { CreateUserDto } from '@/entities/user'
-import { BaseInput, BaseButton } from '@/shared/ui'
+import { AppInput, AppButton } from '@/shared/ui'
 
 const props = withDefaults(
   defineProps<{
@@ -87,21 +87,21 @@ const onSubmit = handleSubmit((values) => {
 <template>
   <form class="user-form" novalidate @submit.prevent="onSubmit">
     <div class="user-form__grid">
-      <BaseInput
+      <AppInput
         v-model="firstName"
         v-bind="firstNameAttrs"
         label="First name"
         placeholder="Emily"
         :error="errors.firstName"
       />
-      <BaseInput
+      <AppInput
         v-model="lastName"
         v-bind="lastNameAttrs"
         label="Last name"
         placeholder="Johnson"
         :error="errors.lastName"
       />
-      <BaseInput
+      <AppInput
         v-model="email"
         v-bind="emailAttrs"
         type="email"
@@ -109,7 +109,7 @@ const onSubmit = handleSubmit((values) => {
         placeholder="emily@example.com"
         :error="errors.email"
       />
-      <BaseInput
+      <AppInput
         v-model="username"
         v-bind="usernameAttrs"
         label="Username"
@@ -117,7 +117,7 @@ const onSubmit = handleSubmit((values) => {
         autocomplete="username"
         :error="errors.username"
       />
-      <BaseInput
+      <AppInput
         v-model="password"
         v-bind="passwordAttrs"
         type="password"
@@ -125,7 +125,7 @@ const onSubmit = handleSubmit((values) => {
         autocomplete="new-password"
         :error="errors.password"
       />
-      <BaseInput
+      <AppInput
         v-model="age"
         v-bind="ageAttrs"
         type="number"
@@ -150,7 +150,7 @@ const onSubmit = handleSubmit((values) => {
         <div v-if="errors.gender" class="invalid-feedback">{{ errors.gender }}</div>
       </div>
 
-      <BaseInput
+      <AppInput
         v-model="phone"
         v-bind="phoneAttrs"
         type="tel"
@@ -161,17 +161,17 @@ const onSubmit = handleSubmit((values) => {
     </div>
 
     <p v-if="errorMessage" class="form-error">
-      <i class="bi bi-exclamation-triangle"></i>
+      <i class="pi pi-exclamation-triangle"></i>
       {{ errorMessage }}
     </p>
 
     <div class="user-form__actions">
-      <BaseButton variant="secondary" :disabled="isSubmitting" @click="emit('cancel')">
+      <AppButton variant="secondary" :disabled="isSubmitting" @click="emit('cancel')">
         Скасувати
-      </BaseButton>
-      <BaseButton type="submit" :disabled="isSubmitting">
+      </AppButton>
+      <AppButton type="submit" :disabled="isSubmitting">
         {{ isSubmitting ? 'Збереження...' : submitLabel }}
-      </BaseButton>
+      </AppButton>
     </div>
   </form>
 </template>

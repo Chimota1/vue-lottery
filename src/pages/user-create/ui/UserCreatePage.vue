@@ -4,10 +4,12 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUsersStore, type CreateUserDto } from '@/entities/user'
 import { UserForm } from '@/features/user-form'
+import { useOperationsNotifier } from '@/shared/ui'
 
 const router = useRouter()
 const usersStore = useUsersStore()
 const { listQuery } = storeToRefs(usersStore)
+const { notifySuccess, notifyError } = useOperationsNotifier()
 
 const isSubmitting = ref(false)
 const submitError = ref<string | null>(null)
@@ -18,9 +20,11 @@ async function handleSubmit(values: CreateUserDto): Promise<void> {
 
   try {
     await usersStore.createUser(values)
+    notifySuccess('Користувача створено')
     router.push({ name: 'users' })
   } catch (e) {
     submitError.value = e instanceof Error ? e.message : 'Не вдалося створити користувача'
+    notifyError(submitError.value)
   } finally {
     isSubmitting.value = false
   }
@@ -33,7 +37,7 @@ function cancel(): void {
 
 <template>
   <RouterLink :to="{ name: 'users', query: listQuery }" class="back-link">
-    <i class="bi bi-arrow-left"></i>
+    <i class="pi pi-arrow-left"></i>
     До списку учасників
   </RouterLink>
 

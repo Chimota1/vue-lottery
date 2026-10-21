@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { User } from '@/entities/user'
+import { AppTable, AppTableColumn } from '@/shared/ui'
 
 defineProps<{
   users: User[]
@@ -9,109 +10,92 @@ defineProps<{
 const emit = defineEmits<{
   delete: [user: User]
 }>()
+
+function fullName(user: User): string {
+  return `${user.firstName} ${user.lastName}`
+}
 </script>
 
 <template>
-  <div class="table-wrapper">
-    <table class="table participants-table">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Gender</th>
-        <th>Email</th>
-        <th>Phone number</th>
-        <th class="actions-cell">Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(user, index) in users" :key="user.id">
-        <td class="index-cell">{{ startIndex + index + 1 }}</td>
-        <td>
-          <RouterLink :to="{ name: 'user-details', params: { id: user.id } }" class="user-cell">
-            <img
-              v-if="user.image"
-              :src="user.image"
-              :alt="`${user.firstName} ${user.lastName}`"
-              class="user-cell__avatar"
-            />
-            <span v-else class="user-cell__avatar user-cell__avatar--empty">
-                <i class="bi bi-person"></i>
-              </span>
-            <span class="text-cell" :title="`${user.firstName} ${user.lastName}`">
-                {{ user.firstName }} {{ user.lastName }}
-              </span>
-          </RouterLink>
-        </td>
-        <td>{{ user.age }}</td>
-        <td>{{ user.gender }}</td>
-        <td>
-          <span class="text-cell" :title="user.email">{{ user.email }}</span>
-        </td>
-        <td>{{ user.phone }}</td>
-        <td class="actions-cell">
-          <div class="actions">
-            <RouterLink
-              :to="{ name: 'user-details', params: { id: user.id } }"
-              class="icon-btn"
-              title="Переглянути"
-              aria-label="Переглянути"
-            >
-              <i class="bi bi-eye"></i>
-            </RouterLink>
-            <RouterLink
-              :to="{ name: 'user-edit', params: { id: user.id } }"
-              class="icon-btn icon-btn--edit"
-              title="Редагувати дані"
-              aria-label="Редагувати дані"
-            >
-              <i class="bi bi-pencil"></i>
-            </RouterLink>
-            <button
-              type="button"
-              class="icon-btn icon-btn--delete"
-              title="Видалити учасника"
-              aria-label="Видалити учасника"
-              @click="emit('delete', user)"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+  <AppTable :value="users">
+    <AppTableColumn header="#">
+      <template #body="slotProps">
+        {{ startIndex + (slotProps.index as number) + 1 }}
+      </template>
+    </AppTableColumn>
 
-  <p v-if="users.length === 0" class="empty-message">Користувачів не знайдено</p>
+    <AppTableColumn header="Name">
+      <template #body="slotProps">
+        <RouterLink
+          :to="{ name: 'user-details', params: { id: slotProps.data.id } }"
+          class="user-cell"
+        >
+          <img
+            v-if="slotProps.data.image"
+            :src="slotProps.data.image"
+            :alt="fullName(slotProps.data)"
+            class="user-cell__avatar"
+          />
+          <span v-else class="user-cell__avatar user-cell__avatar--empty">
+            <i class="pi pi-user"></i>
+          </span>
+          <span class="text-cell" :title="fullName(slotProps.data)">
+            {{ fullName(slotProps.data) }}
+          </span>
+        </RouterLink>
+      </template>
+    </AppTableColumn>
+
+    <AppTableColumn field="age" header="Age" />
+    <AppTableColumn field="gender" header="Gender" />
+
+    <AppTableColumn field="email" header="Email">
+      <template #body="slotProps">
+        <span class="text-cell" :title="slotProps.data.email">{{ slotProps.data.email }}</span>
+      </template>
+    </AppTableColumn>
+
+    <AppTableColumn field="phone" header="Phone number" />
+
+    <AppTableColumn header="Actions" body-class="actions-cell">
+      <template #body="slotProps">
+        <div class="actions">
+          <RouterLink
+            :to="{ name: 'user-details', params: { id: slotProps.data.id } }"
+            class="icon-btn"
+            title="Переглянути"
+            aria-label="Переглянути"
+          >
+            <i class="pi pi-eye"></i>
+          </RouterLink>
+          <RouterLink
+            :to="{ name: 'user-edit', params: { id: slotProps.data.id } }"
+            class="icon-btn icon-btn--edit"
+            title="Редагувати дані"
+            aria-label="Редагувати дані"
+          >
+            <i class="pi pi-pencil"></i>
+          </RouterLink>
+          <button
+            type="button"
+            class="icon-btn icon-btn--delete"
+            title="Видалити учасника"
+            aria-label="Видалити учасника"
+            @click="emit('delete', slotProps.data)"
+          >
+            <i class="pi pi-trash"></i>
+          </button>
+        </div>
+      </template>
+    </AppTableColumn>
+
+    <template #empty>
+      <p class="empty-message">Користувачів не знайдено</p>
+    </template>
+  </AppTable>
 </template>
 
 <style scoped>
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.participants-table {
-  width: 100%;
-  margin-bottom: 0;
-}
-
-.participants-table th,
-.participants-table td {
-  padding: 12px 10px;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.participants-table th {
-  font-weight: 600;
-}
-
-.index-cell {
-  color: #6c757d;
-}
-
 .user-cell {
   display: flex;
   align-items: center;
@@ -147,10 +131,7 @@ const emit = defineEmits<{
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
-}
-
-.actions-cell {
-  text-align: right;
+  white-space: nowrap;
 }
 
 .actions {
@@ -200,6 +181,5 @@ const emit = defineEmits<{
   color: #6c757d;
   text-align: center;
   margin: 0;
-  padding: 24px 0 8px;
 }
 </style>

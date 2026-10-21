@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { User } from '@/entities/user'
 import WinnerItem from './WinnerItem.vue'
-import { BaseButton } from '@/shared/ui'
+import { AppButton } from '@/shared/ui'
 
 defineProps<{
   winners: User[]
@@ -26,7 +26,7 @@ const emit = defineEmits<{
           @remove="emit('remove', $event)"
         />
       </div>
-      <BaseButton :disabled="!canPickWinner" @click="emit('pick')">New winner</BaseButton>
+      <AppButton :disabled="!canPickWinner" @click="emit('pick')">New winner</AppButton>
     </div>
   </div>
 </template>

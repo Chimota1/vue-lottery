@@ -1,7 +1,7 @@
 <template>
   <RouterLink to="/" class="app-logo">
     <span class="app-logo__icon">
-      <i class="bi bi-trophy-fill"></i>
+      <i class="pi pi-trophy"></i>
     </span>
     <span class="app-logo__text">Vue Lottery</span>
   </RouterLink>

@@ -38,7 +38,7 @@ watch(query, (value) => {
 
 <template>
   <div class="search-bar">
-    <i class="bi bi-search search-bar__icon"></i>
+    <i class="pi pi-search search-bar__icon"></i>
     <input
       v-model="query"
       type="search"

@@ -13,7 +13,7 @@ function logout(): void {
 
 <template>
   <button type="button" class="nav-item nav-item--auth" @click="logout">
-    <i class="bi bi-box-arrow-right"></i>
+    <i class="pi pi-sign-out"></i>
     Logout
   </button>
 </template>

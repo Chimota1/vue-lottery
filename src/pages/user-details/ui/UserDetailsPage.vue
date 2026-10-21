@@ -2,7 +2,8 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useUsersStore, DeleteUserModal } from '@/entities/user'
+import { useUsersStore } from '@/entities/user'
+import { AppConfirmDialog, useOperationsNotifier } from '@/shared/ui'
 
 const props = defineProps<{
   id: string
@@ -17,6 +18,7 @@ const route = useRoute()
 const router = useRouter()
 const usersStore = useUsersStore()
 const { listQuery } = storeToRefs(usersStore)
+const { notifySuccess, notifyError } = useOperationsNotifier()
 
 const userId = computed(() => Number(props.id))
 const user = computed(() => usersStore.getUser(userId.value))
@@ -86,9 +88,11 @@ async function confirmDelete(): Promise<void> {
   try {
     await usersStore.removeUser(userId.value)
     isDeleteModalOpen.value = false
+    notifySuccess('Користувача видалено')
     router.push({ name: 'users', query: listQuery.value })
   } catch (e) {
     deleteError.value = e instanceof Error ? e.message : 'Не вдалося видалити користувача'
+    notifyError(deleteError.value)
   } finally {
     isDeleting.value = false
   }
@@ -97,19 +101,19 @@ async function confirmDelete(): Promise<void> {
 
 <template>
   <RouterLink :to="{ name: 'users', query: listQuery }" class="back-link">
-    <i class="bi bi-arrow-left"></i>
+    <i class="pi pi-arrow-left"></i>
     До списку учасників
   </RouterLink>
 
   <div class="card">
     <div v-if="isLoading && !user" class="card-body state">
-      <i class="bi bi-arrow-repeat state__spinner"></i>
+      <i class="pi pi-refresh pi-spin state__spinner"></i>
       Завантаження...
     </div>
 
     <div v-else-if="loadError" class="card-body state state--error">
       <p class="state__text">
-        <i class="bi bi-exclamation-triangle"></i>
+        <i class="pi pi-exclamation-triangle"></i>
         {{ loadError }}
       </p>
       <button type="button" class="btn btn-primary" @click="loadUser">Спробувати ще раз</button>
@@ -124,7 +128,7 @@ async function confirmDelete(): Promise<void> {
           class="profile__avatar"
         />
         <span v-else class="profile__avatar profile__avatar--empty">
-          <i class="bi bi-person"></i>
+          <i class="pi pi-user"></i>
         </span>
 
         <div class="profile__info">
@@ -134,11 +138,11 @@ async function confirmDelete(): Promise<void> {
 
         <div v-if="!isEditing" class="profile__actions">
           <RouterLink :to="{ name: 'user-edit', params: { id } }" class="btn btn-primary">
-            <i class="bi bi-pencil"></i>
+            <i class="pi pi-pencil"></i>
             Редагувати
           </RouterLink>
           <button type="button" class="btn btn-danger" @click="openDeleteModal">
-            <i class="bi bi-trash"></i>
+            <i class="pi pi-trash"></i>
             Видалити
           </button>
         </div>
@@ -155,11 +159,14 @@ async function confirmDelete(): Promise<void> {
     </div>
   </div>
 
-  <DeleteUserModal
+  <AppConfirmDialog
     v-model="isDeleteModalOpen"
-    :user="user"
-    :is-deleting="isDeleting"
+    title="Видалення учасника"
+    :message="user ? `Видалити учасника ${user.firstName} ${user.lastName}?` : undefined"
     :error-message="deleteError"
+    :is-loading="isDeleting"
+    confirm-label="Видалити"
+    danger
     @confirm="confirmDelete"
   />
 </template>

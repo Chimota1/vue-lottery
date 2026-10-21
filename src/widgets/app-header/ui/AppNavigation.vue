@@ -38,7 +38,7 @@ const { user, isAuthenticated } = storeToRefs(sessionStore)
     </template>
 
     <RouterLink v-else to="/login" class="nav-item nav-item--auth">
-      <i class="bi bi-box-arrow-in-right"></i>
+      <i class="pi pi-sign-in"></i>
       Login
     </RouterLink>
   </nav>

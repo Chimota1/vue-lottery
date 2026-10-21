@@ -5,7 +5,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { z } from 'zod'
 import { useSessionStore } from '@/entities/session'
-import { BaseInput, BaseButton } from '@/shared/ui'
+import { AppInput, AppButton, useOperationsNotifier } from '@/shared/ui'
 
 const REQUIRED = "Поле обов'язкове для заповнення"
 const MIN_PASSWORD_LENGTH = 6
@@ -13,6 +13,7 @@ const MIN_PASSWORD_LENGTH = 6
 const route = useRoute()
 const router = useRouter()
 const authStore = useSessionStore()
+const { notifyError } = useOperationsNotifier()
 
 // 1. Виносимо Zod-схему в окрему змінну (без required_error, щоб уникнути конфлікту типів)
 const zodSchema = z.object({
@@ -53,7 +54,9 @@ const onSubmit = handleSubmit(async (values) => {
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : null
     router.push(redirect ?? { name: 'users' })
   } catch (e) {
-    loginError.value = e instanceof Error ? e.message : 'Не вдалося увійти'
+    const message = e instanceof Error ? e.message : 'Не вдалося увійти'
+    loginError.value = message
+    notifyError(message)
   } finally {
     isSubmitting.value = false
   }
@@ -62,7 +65,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
   <form novalidate @submit.prevent="onSubmit">
-    <BaseInput
+    <AppInput
       v-model="username"
       v-bind="usernameAttrs"
       label="Username"
@@ -70,7 +73,7 @@ const onSubmit = handleSubmit(async (values) => {
       autocomplete="username"
       :error="errors.username"
     />
-    <BaseInput
+    <AppInput
       v-model="password"
       v-bind="passwordAttrs"
       type="password"
@@ -81,13 +84,13 @@ const onSubmit = handleSubmit(async (values) => {
     />
 
     <p v-if="loginError" class="login__error">
-      <i class="bi bi-exclamation-triangle"></i>
+      <i class="pi pi-exclamation-triangle"></i>
       {{ loginError }}
     </p>
 
-    <BaseButton type="submit" class="login__submit" :disabled="isSubmitting">
+    <AppButton type="submit" class="login__submit" :loading="isSubmitting" :disabled="isSubmitting">
       {{ isSubmitting ? 'Вхід...' : 'Увійти' }}
-    </BaseButton>
+    </AppButton>
   </form>
 </template>
 
